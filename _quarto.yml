@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: docs
 
 website:
   title: "Humanitarians"
@@ -16,11 +17,6 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
-
-project:
-  type: website
-  output-dir: docs
-
 
 
 resources:
