@@ -19,6 +19,7 @@ format:
     include-in-header:
       - text: |
           <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
     bibliography: references.bib
 ---
 
@@ -655,7 +656,5 @@ Behind every point on this interactive dashboard is a person: a health worker, a
 As the humanitarian landscape continues to shift and is shaped by politics, climate, and conflict so too must our tools for protecting those who sustain it. The risks are real, the responsibilities are ours, and the time for action is now.
 
 
+This dashboard uses the Close Read extension to enable interactive storytelling with scroll-triggered map transitions [@closeread].
 
-[^text]: ©Tufte, Edward, *The Visual Display of Quantitative Information*, 2nd ed., 2001, Graphics Press, Cheshire Connecticut, 40. 
-
-[^map]: Charles Joseph Minard, *Tableaux Graphiques et Cartes Figuratives de M. Minard*, 1845-1869, a portfolio of his work held by the Bibliothèque de l’École Nationale des Ponts et Chaussées, Paris, as reproduced in Edward R. Tufte, *The Visual Display of Quantitative Information* (Cheshire, Connecticut © 1983, 2001), p. 176.
