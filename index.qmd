@@ -1,0 +1,661 @@
+---
+title: "The Visual Display of Quantitative Information"
+author: Edward Tufte
+format: 
+  closeread-html:
+    css: cr-tufte.css
+    remove-header-space: true
+    code-tools: true
+    image: mindard-map.png
+    description: Analyzing violence against aid workers
+    mainfont: 'et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif'
+    cr-style:
+      narrative-background-color-overlay: transparent
+      narrative-background-color-sidebar: transparent
+      section-background-color: transparent
+      narrative-text-color-overlay: black
+      narrative-font-family: 'et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif'
+    html:
+    include-in-header:
+      - text: |
+          <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    bibliography: references.bib
+---
+
+## Risky Bravery: <br> The Human Cost of Humanitarian Work
+
+The act of giving back to at-risk communities has always been a considerable act of selflessness and recognition. As various countries around the world are often met with troubling disasters, humanitarian workers often rush to bring aid to those in need. However, such acts of bravery and volunteerism come with a risk to their personal lives, as thousands of humanitarians can be harmed themselves. They deliver food, administer vaccines, rebuild communities, and offer hope to ravaged communities. But behind the logistics and headlines lies a harder truth: their work is dangerous, and the risks they face are growing.
+
+As violence against aid workers becomes more common, understanding its pattern can provide insights to those who wish to help others in times of need. By exploring the patterns of targeted attacks, kidnappings, and killings, humanitarian organizations can provide their volunteers with the proper means and information to protect themselves while coming to the aid of those facing difficult situations. Analyzing the pattern of violence against humanitarians is important because when an aid worker is harmed, food does not reach the hungry, medical care is delayed for the wounded, and recovery efforts stall overall.
+
+Thankfully, the Aid Worker Security Database (AWSD) has provided the public with the opportunity to understand this crisis more clearly. Maintained by Humanitarian Outcomes, the AWSD systematically tracks major incidents of violence against aid workers—including killings, kidnappings, and serious injuries—dating back to 1997 all the way to 2025. It collects and verifies data from news sources, aid agencies, and official reports to build a comprehensive picture of where, how, and why these attacks happen [@awsd].
+
+With such a valuable database as a main source, this interactive dashboard aims to take a closer look at the risks that humanitarians face during their missions. This analysis will explore how violence against humanitarians has evolved over time, the demographics of those who face the greatest risk, the top means of attacks throughout the years, the countries that present the most risk, and the top motives behind the attacks on humanitarians.
+
+The goal is not only data exploration, but strategic insight for humanitarian missions. It’s about bearing witness. Understanding these patterns is the first step toward accountability, protection, and change. As aid workers make the selfless sacrifice to come to the aid of those in need, it is our duty to ensure their safety so they can not only help victims but also return home to their families
+
+
+:::{.cr-section}
+
+{{< spacer 10svh >}}
+
+@cr-map 
+
+## Serving Through Crisis: <br>The Rising Toll on Humanitarians
+
+As previously mentioned, [@cr-map] there has been a consistent upward trend in violence against aid workers from 1997 to the present day. This line chart further illustrates that while the overall trajectory is rising, the number of incidents has fluctuated significantly over the years.
+
+
+As highlighted in this graph, a significant spike in violence against humanitarians occurs in 2003, [@cr-map]{pan-to="65%,-5%" scale-by="3.5"} during the early stages of the **Iraq invasion**. The U.S.-led invasion of Iraq in 2003 may have contributed to significant instability in the region, which would be the likely cause of the heightened risks for humanitarian workers. The resulting conflict may have made aid operations more vulnerable to attacks, as the conflict continued between the two nations.[@cr-map label="Iraq Invasion (2003)" x="2003" y="80" scale-by="1.0"]
+
+Another visible peak between 2008 and 2010, as demonstrated by the graph [@cr-map]{pan-to="45%,-5%" scale-by="4.0"} [@cr-map label="Haiti Earthquake (2010)" x="2010" y="130"], shows a notable drop in violence against aid workers in 2010, which corresponds to the **2010 Earthquake in Haiti**. However, the aftermath of this event reveals a subsequent rise in violence against aid workers, highlighting the evolving security challenges that humanitarians face. The decline in incidents immediately following the earthquake might reflect temporary changes in access or operational shifts, but the eventual rise underscores the ongoing threats faced by aid workers in high-risk environments. 
+
+One of the most striking peaks occurred in **2013**, [@cr-map]{pan-to="10%,-10%" scale-by="4.0"}, when reported incidents surged dramatically to over 260. This coincided with major humanitarian crises and protracted conflicts in countries like Syria, South Sudan, and the Central African Republic. As we can see, major events may lead to a higher count of violence against aid workers. 
+
+Another sharp spike appears in **2020**, [@cr-map]{pan-to="-100%,-10%" scale-by="2.4"} reaching the highest recorded number of incidents—over 250. 2020 is marked by the **COVID-19 epidemic** and underscores the growing intensity of threats in conflict zones, particularly as aid operations intersect with increasingly volatile political and security environments.
+
+
+A sharp peak between 2023 and 2025 [@cr-map]{pan-to="-100%,-10%" scale-by="2.4"} when the number of incidents against aid workers skyrocketed. This sudden increase highlights the continued high risk that aid workers face as they come to the aid of those in need.[@cr-map]
+
+Overall, the persistent rise and fluctuations in violence against aid workers over the years underscore the complex and ever-evolving nature of humanitarian risk. Each peak and dip on the chart reflects more than just data as they represent the safety, accessibility, and effectiveness of critical life-saving efforts across the globe. [@cr-map]
+
+
+
+
+
+
+
+:::{#cr-map}
+
+
+
+```{ojs}
+
+incidents =d3.csv("security_incidents.csv", d => ({
+  Year: +d["Year"] }))
+
+```
+
+```{ojs}
+{
+
+  const yearCounts = incidents.reduce((acc, row) => {
+    if (!isNaN(row.Year)) {
+      acc[row.Year] = (acc[row.Year] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  const sortedYears = Object.keys(yearCounts).map(Number).sort((a, b) => a - b);
+  const counts = sortedYears.map(year => yearCounts[year]);
+
+
+  const deltas = counts.map((c, i) => c - (counts[i - 1] || 0));
+  const markerColors = deltas.map(d => d >= 0 ? "#3b82f6" : "#f87171");
+  const markerSymbols = deltas.map(d => d >= 100 ? "star" : "circle");
+
+
+  const trace = {
+    x: sortedYears,
+    y: counts,
+    type: "scatter",
+    mode: "lines+markers",
+    name: "Incidents",
+    line: {
+      color: "#3b82f6",
+      width: 3
+    },
+    marker: {
+      size: 8,
+      color: markerColors,
+      symbol: markerSymbols,
+      line: { width: 1, color: "#1e40af" }
+    },
+    hovertemplate:
+      `<b>%{y}</b> incidents<br>` +
+      `Year: <b>%{x}</b><br>` +
+      `Δ from prev: %{customdata} <extra></extra>`,
+    customdata: deltas
+  };
+
+  const layout = {
+    title: {
+      text: "A Rising Threat: Global Patterns of Attacks on Aid Workers (1997–Present)",
+      font: { size: 15, family: "Arial, sans-serif" }
+    },
+    paper_bgcolor: "#f0faff",
+    plot_bgcolor: "#ffffff",
+    dragmode: "zoom", 
+    xaxis: {
+      title: "Year",
+      gridcolor: "#dbeafe",
+      zeroline: false,
+      rangeslider: { visible: false }, 
+    },
+    yaxis: {
+      title: "Number of Incidents",
+      gridcolor: "#dbeafe",
+      zeroline: false
+    },
+    legend: {
+      bgcolor: "#ffffff",
+      bordercolor: "#ccc",
+      borderwidth: 1
+    },
+    hovermode: "x unified",
+    margin: { t: 60, l: 60, r: 30, b: 60 },
+    annotations: [
+      {
+        x: 2003,
+        y: yearCounts[2003],
+        text: "Iraq Invasion",
+        showarrow: true,
+        arrowhead: 6,
+        ax: -40,
+        ay: -40,
+        bgcolor: "rgba(255,255,255,0.9)",
+        bordercolor: "#3b82f6"
+      },
+      {
+        x: 2010,
+        y: yearCounts[2010],
+        text: "Haiti Earthquake",
+        showarrow: true,
+        arrowhead: 6,
+        ax: 30,
+        ay: -50,
+        bgcolor: "rgba(255,255,255,0.9)",
+        bordercolor: "#f59e0b",
+        
+      },
+        {
+        x: 2020,
+        y: yearCounts[2020],
+        text: "COVID-19 Pandemic",
+        showarrow: true,
+        arrowhead: 6,
+        ax: 30,
+        ay: -50,
+        bgcolor: "rgba(255,255,255,0.9)",
+        bordercolor: "#f59e0b",
+        
+      }
+    ],
+    shapes: [
+      {
+        type: "rect",
+        xref: "x",
+        yref: "paper",
+        x0: 2010,
+        x1: 2015,
+        y0: 0,
+        y1: 1,
+        fillcolor: "rgba(59,130,246,0.05)",
+        line: { width: 0 }
+      }
+    ]
+  };
+
+
+  const config = {
+    responsive: true,
+    displayModeBar: false
+  };
+
+  const el = DOM.element("div");
+  window.incidentChart = el;
+  Plotly.newPlot(el, [trace], layout, config);
+  return el;
+}
+
+
+```
+
+
+:::
+
+
+
+
+
+
+
+
+
+:::{#cr-mapped}
+
+
+```{ojs}
+
+//| async: true
+incidents2 = await d3.csv("security_incidents.csv", d => ({
+  Year: +d["Year"],
+  Nationals: +d["Total nationals"],
+  Internationals: +d["Total internationals"]
+}))
+
+
+```
+
+```{ojs}
+{
+  const yearlySums = {};
+
+  for (const row of incidents2) {
+    if (!isNaN(row.Year)) {
+      if (!yearlySums[row.Year]) {
+        yearlySums[row.Year] = { nationals: 0, internationals: 0 };
+      }
+      yearlySums[row.Year].nationals += +row.Nationals || 0;
+      yearlySums[row.Year].internationals += +row.Internationals || 0;
+    }
+  }
+
+  const sortedYears = Object.keys(yearlySums).map(Number).sort((a, b) => a - b);
+  const nationals = sortedYears.map(year => yearlySums[year].nationals);
+  const internationals = sortedYears.map(year => yearlySums[year].internationals);
+
+  const deltaNationals = nationals.map((v, i) => v - (nationals[i - 1] || 0));
+  const deltaInternationals = internationals.map((v, i) => v - (internationals[i - 1] || 0));
+
+  const traces = [
+    {
+      x: sortedYears,
+      y: nationals,
+      name: "Nationals",
+      type: "scatter",
+      mode: "lines+markers",
+      marker: {
+        color: "#2563eb",
+        symbol: "circle",
+        size: 7
+      },
+      line: {
+        color: "#2563eb",
+        width: 3
+      },
+      hovertemplate:
+        "<b>%{y}</b> national staff<br>" +
+        "Year: <b>%{x}</b><br>" +
+        "Change from previous: <b>%{customdata:+}</b><extra></extra>",
+      customdata: deltaNationals
+    },
+    {
+      x: sortedYears,
+      y: internationals,
+      name: "Internationals",
+      type: "scatter",
+      mode: "lines+markers",
+      marker: {
+        color: "#ea580c",
+        symbol: "diamond",
+        size: 7
+      },
+      line: {
+        color: "#ea580c",
+        width: 3,
+        dash: "dot"
+      },
+      hovertemplate:
+        "<b>%{y}</b> international staff<br>" +
+        "Year: <b>%{x}</b><br>" +
+        "Change from previous: <b>%{customdata:+}</b><extra></extra>",
+      customdata: deltaInternationals
+    }
+  ];
+
+  const layout = {
+    title: {
+      text: "Nationals vs Internationals: Aid Worker Incidents Over Time",
+      font: { size: 20, family: "Arial, sans-serif" }
+    },
+    paper_bgcolor: "#f0faff",
+    plot_bgcolor: "#ffffff",
+    xaxis: {
+      title: "Year",
+      gridcolor: "#dbeafe",
+      zeroline: false
+    },
+    yaxis: {
+      title: "Number of Incidents",
+      gridcolor: "#dbeafe",
+      zeroline: false
+    },
+    hovermode: "x unified",
+    legend: {
+      bgcolor: "#ffffff",
+      bordercolor: "#ccc",
+      borderwidth: 1
+    },
+    annotations: [
+      {
+        x: 2013,
+        y: nationals[sortedYears.indexOf(2013)],
+        text: "First Nat. Peak",
+        showarrow: true,
+        arrowhead: 6,
+        ax: -60,
+        ay: -40,
+        bgcolor: "#ffffff",
+        bordercolor: "#2563eb"
+      },
+         {
+        x: 2024,
+        y: nationals[sortedYears.indexOf(2024)],
+        text: "Highest Nat. Peak",
+        showarrow: true,
+        arrowhead: 6,
+        ax: -60,
+        ay: -40,
+        bgcolor: "#ffffff",
+        bordercolor: "#2563eb"
+      },
+      {
+        x: 2009,
+        y: internationals[sortedYears.indexOf(2009)],
+        text: "Highest Int. Peak",
+        showarrow: true,
+        arrowhead: 6,
+        ax: 30,
+        ay: -50,
+        bgcolor: "#ffffff",
+        bordercolor: "#ea580c"
+      }
+    ],
+    margin: { t: 60, l: 60, r: 30, b: 60 }
+  };
+
+  const el = DOM.element("div");
+  Plotly.newPlot(el, traces, layout, { responsive: true });
+  return el;
+}
+
+
+```
+:::
+
+
+
+## Unequal Risk: <br> National Aid Workers Shoulder the Heaviest Burden
+[@cr-mapped]  The next step in understanding violence against aid workers is identifying who bears the brunt of it. This is crucial, as it enables humanitarian organizations to better strategize how they protect their personnel. As demonstrated by this line chart, not all aid workers face the same level of risk, and recognizing these disparities is the first step toward ensuring that those most vulnerable who are often overlooked—receive the support, protection, and resources they need.
+
+This graph starkly [@cr-mapped] illustrates the disproportionate impact of violence on national aid workers compared to their international counterparts. Over the past two decades, incidents involving national staff have risen dramatically, while violence against international workers has remained consistently low. This widening gap underscores the urgent need for humanitarian organizations to increase support for national aid workers, who often face greater risks with fewer protections.
+
+Distinct peaks in the data reveal how risk has shifted over time. For national aid workers, a sharp surge in incidents occurred in **2013**, reaching nearly **400 cases**, [@cr-mapped]{pan-to="40%,-10%" scale-by="3.1"} likely reflecting increased exposure amid regional conflicts and crises. This spike underscores how national staff are often on the frontlines during periods of heightened instability. In contrast, international staff experienced their highest peak in 2009, with fewer than **10 incidents** This stark disparity in the number of incidents between national and international aid workers further emphasizes the urgent need for increased protection and support for national humanitarians, who shoulder the greatest risk.
+
+The highest peak of violence against aid workers [@cr-mapped]{pan-to="-100%,-10%" scale-by="2.4"} occurred in 2024, overwhelmingly impacting national staff. Unlike their international counterparts, national workers often may remain in volatile areas long after evacuations as they operat with fewer security resources and facing greater day-to-day risks. They also may also receive less institutional protection and long-term support. This imbalance reveals a critical gap in humanitarian response so underscoring the urgent need to prioritize the safety, insurance, and sustained well-being of national staff, who are the backbone of global aid delivery.
+
+Overall, this illustration highlights the stark disparity in the risks faced by national as compared to international aid workers. While international staff tend to face lower and less frequent exposure to violence, national staff bear the brunt of this danger, as they often operate in more volatile environments with fewer resources and protections. Addressing this imbalance is crucial for the future of humanitarian work. To ensure the safety and sustainability of aid efforts, humanitarian organizations must invest more significantly in the safety, support, and protection of national staff as they are often the first responders and the backbone of global relief operations.[@cr-mapped]
+
+
+
+:::{#cr-map2}
+
+```{ojs}
+
+attackData = await d3.csv("security_incidents.csv", d => ({
+  Year: +d["Year"],
+  Attack: d["Means of attack"]
+})).then(data => data.filter(d => !isNaN(d.Year)))
+```
+
+
+```{ojs}
+{
+  
+  const top5 = Array.from(
+    d3.rollups(attackData, v => v.length, d => d.Attack)
+      .sort((a, b) => d3.descending(a[1], b[1]))
+      .slice(0, 5),
+    d => d[0]
+  );
+
+
+  const grouped = d3.rollups(
+    attackData.filter(d => top5.includes(d.Attack)),
+    v => v.length,
+    d => d.Year,
+    d => d.Attack
+  );
+
+ 
+  const attackByYear = {};
+  for (const [year, entries] of grouped) {
+    const entryMap = new Map(entries);
+    attackByYear[year] = top5.map(attack => ({
+      attack,
+      count: entryMap.get(attack) || 0
+    }));
+  }
+
+  const attackYears = Object.keys(attackByYear).map(Number).sort((a, b) => a - b);
+  const firstYear = attackYears[0];
+
+  
+  const el = html`<div id="scroll-attack-chart" style="height: 700px;"></div>`;
+  const maxX = d3.max(Object.values(attackByYear).flat(), d => d.count) * 1.2;
+
+  function getBarColors(data) {
+    const maxCount = Math.max(...data.map(d => d.count));
+    return data.map(d => d.count === maxCount && d.count > 0 ? "#ef4444" : "#3b82f6");
+  }
+
+
+  const initial = attackByYear[firstYear];
+  Plotly.newPlot(el, [{
+    type: "bar",
+    orientation: "h",
+    x: initial.map(d => d.count),
+    y: initial.map(d => d.attack),
+    text: initial.map(d => d.count),
+    textposition: "auto",
+    marker: { color: getBarColors(initial) },
+    hovertemplate: "<b>%{y}</b><br>%{x} incidents<extra></extra>"
+  }], {
+    title: {
+      text: `Top 5 Means of Attack on Aid Workers – ${firstYear}`,
+      font: { size: 20 }
+    },
+    paper_bgcolor: "#f0faff",
+    plot_bgcolor: "#ffffff",
+    margin: { t: 60, l: 180, r: 30, b: 60 },
+    xaxis: {
+      title: "Number of Incidents",
+      gridcolor: "#dbeafe",
+      range: [0, maxX]
+    },
+    yaxis: {
+      title: "Means of Attack",
+      gridcolor: "#dbeafe",
+      autorange: "reversed"
+    },
+    bargap: 0.5
+  }, { responsive: true });
+
+  // 7. Animate on scroll into view
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        let index = 1;
+        const run = () => {
+          if (index >= attackYears.length) return;
+
+          const year = attackYears[index];
+          const data = attackByYear[year];
+
+          Plotly.animate(el, {
+            data: [{
+              x: data.map(d => d.count),
+              y: data.map(d => d.attack),
+              text: data.map(d => d.count),
+              marker: { color: getBarColors(data) }
+            }],
+            layout: { title: `Top 5 Means of Attack on Aid Workers – ${year}` }
+          }, {
+            transition: { duration: 400 },
+            frame: { duration: 800, redraw: true }
+          });
+
+          index++;
+          setTimeout(run, 1100);
+        };
+
+        setTimeout(run, 1000);
+        observer.unobserve(entry.target);
+      }
+    }
+  }, { threshold: 0.4 });
+
+  observer.observe(el);
+  return el;
+}
+
+
+```
+
+
+:::
+
+:::{#cr-map2}
+
+
+:::
+
+## Shifting Tactics: How Aid Workers Are Attacked Has Evolved
+
+[@cr-map2] To effectively address and mitigate the risks faced by aid workers, understanding the means by which they are targeted is crucial. Identifying the most common methods of violence enables humanitarian organizations to better tailor security measures, allocate resources, and develop strategies to protect workers in high-risk areas. Over time, the methods used to attack aid workers have evolved, and understanding these shifts is vital for adapting security protocols to the changing nature of these threats.
+
+This bar chart demonstrates fluctuations in the top five methods of violence between 1997 and 2025. **Shootings** have consistently been the most prevalent form of attack, with a significant peak in 2023. **Bodily assaults**, which include beatings and physical abuse, saw a sharp rise between 2015 and 2020, even surpassing shootings at one point, showing that physical violence is a leading threat to aid workers. **Kidnapping**, a long-standing concern, ranks as the third most common method of attack. **Aerial bombardment**, while less frequent overall, has steadily increased from 2018 onward, indicating the growing collateral damage from indiscriminate or high-tech warfare. This highlights the evolving nature of threats in modern conflict zones. The **Unknown** category remains variable, pointing to gaps in data collection and classification that complicate efforts to fully assess the scale of violence.
+
+These shifting patterns in violence underscore the growing complexity of threats faced by aid workers. The emergence of new attack methods, alongside traditional forms of violence, highlights the need for humanitarian organizations to continuously adapt their security strategies. Enhanced data collection and reporting are essential to accurately assess these threats and improve protective measures for aid workers in conflict zones.
+
+:::{#cr-map3}
+
+```{ojs}
+
+d3 = require("d3@7")
+
+```
+
+
+```{ojs}
+// Load and parse CSV
+geoData = await d3.csv("security_incidents.csv", d => ({
+  City: d.City,
+  Latitude: +d.Latitude,
+  Longitude: +d.Longitude
+})).then(data => data.filter(d => !isNaN(d.Latitude) && !isNaN(d.Longitude)))
+```
+
+
+```{ojs}
+{
+ 
+  const cityCounts = d3.rollups(
+    geoData,
+    v => v.length,
+    d => d.City
+  ).sort((a, b) => d3.descending(a[1], b[1])).slice(0, 5);
+
+  const top5Cities = new Set(cityCounts.map(d => d[0]));
+
+  
+  const topCityData = Array.from(top5Cities).map(city => {
+    const rows = geoData.filter(d => d.City === city);
+    const count = rows.length;
+    const lat = d3.mean(rows, d => d.Latitude);
+    const lon = d3.mean(rows, d => d.Longitude);
+    return { city, count, lat, lon };
+  });
+
+  
+  const data = [{
+    type: "scattergeo",
+    mode: "markers+text",
+    text: topCityData.map(d => `${d.city}: ${d.count} incidents`),
+    hovertemplate: "<b>%{text}</b><extra></extra>",
+    lon: topCityData.map(d => d.lon),
+    lat: topCityData.map(d => d.lat),
+    marker: {
+      size: topCityData.map(d => Math.sqrt(d.count) * 3), 
+      color: "#ef4444",
+      opacity: 0.7,
+      line: { width: 1, color: "#fff" }
+    }
+  }];
+
+  const layout = {
+    title: {
+      text: "Top 5 Deadliest Cities for Aid Workers",
+      font: { size: 22 }
+    },
+    geo: {
+      showframe: false,
+      showcoastlines: true,
+      projection: { type: "natural earth" },
+      bgcolor: "#f0faff"
+    },
+    paper_bgcolor: "#f0faff",
+    margin: { t: 60, b: 20, l: 10, r: 10 }
+  };
+
+  const el = DOM.element("div");
+  Plotly.newPlot(el, data, layout, { responsive: true });
+  return el;
+}
+
+
+
+```
+
+
+
+:::
+
+:::{#cr-map3}
+
+
+:::
+
+## Deadliest Cities for Aid Workers
+
+[@cr-map3] Some cities have emerged as persistent danger zones for aid workers, where ongoing conflict, instability, and targeted attacks have led to a high concentration of violent incidents. This map highlights the Top 5 Deadliest Cities for aid workers, with the following narrative providing context for each hotspot.
+
+[@cr-map3]{pan-to="48%,-5%" scale-by="2.5"}
+Port-au-Prince, Haiti, has recorded 32 violent incidents. Entrenched gang activity, political instability, and weak governance have created severe risks for aid delivery, making humanitarian access both critical and perilous.
+
+[@cr-map3]{pan-to="-50%,10%" scale-by="2.5"}
+Kabul, Afghanistan, with 31 incidents, has long been a high-risk environment for aid workers. Despite changes in government and international presence, the threat of targeted attacks and bombings remains high.
+
+Mogadishu, Somalia, is one of the most dangerous cities for aid workers, with 65 incidents reported. Armed groups frequently target humanitarian staff, especially locals, who face extreme risk in their daily operations.
+
+In Juba, South Sudan, 49 incidents highlight the hazards of operating amid fragile peace agreements and sporadic outbreaks of violence. Local aid workers are particularly vulnerable to attacks and harassment.
+
+Lastly, the large red cluster representing 988 incidents reflects the broader concentration of violence affecting multiple cities and rural areas across the region. This underscores how aid workers face systemic threats beyond the spotlight of any single city.
+
+[@cr-map3] By identifying these deadliest cities for aid workers, we gain a clearer understanding of where the most significant risks lie. This knowledge enables humanitarian organizations to better allocate resources, enhance security protocols, and prioritize support for aid workers in these high-risk areas. With a more focused approach, we can ensure that those who risk their lives in the service of others are provided with the protections, training, and assistance they need to carry out their vital work more safely and effectively.
+
+
+:::
+
+## Risk, Responsibility, and the Realities of Aid
+
+This interactive dashboard has not only provided a means to explore how violence against aid workers has consistently increased between 1997 and 2025, but has also provided a deep dive of the nuance of such atrocities.  
+
+First, it was revealed a disturbing rise in global incidents over time, with sharp spikes in recent years that coincide with escalating conflicts and deteriorating security in many humanitarian hotspots. By linking this finding to certain global events, we were able to understand how these events may have increased due to the need for humanitarian reliefs during those times and the particular trends associated with those key events. 
+
+Next, through this analysis, a deeply unequal reality of the violence that national humanitarian staff face as compared to international aid workers. This insights highlighted the need for better support national aid workers who carry the brunt of national crises. While international workers are often protected by diplomatic status or security resources, their national colleagues who live in these affected communities face daily threats with far less protection.
+
+It was was also crucial to understand the means by which thoses incidents are carried out. From shootings and kidnappings to assaults and aerial bombardments, the top 5 means of violence against humanitarians. By identifying those methods of terror, humanitarian organization can provide their volunteers with the proper resources to protect themselves.
+
+Finally, identifying the countries who have resulted in the highest numbers of violent incidents against aid workers provided crucial information for humanitarian relief purposes. Although those countries may be the ones to need the highest support, this insight can help prepare humanitarians with the proper resources as they rush to the aid of at risk communities. For example, the aftermath of the 2010 earthquake in Haiti was followed by an increase of violence against aid workers and has been has been identified as one of deadliest countries. Howerver, the dataset presented some data gaps which may be an issue for reliable data analysis. 
+
+Behind every point on this interactive dashboard is a person: a health worker, a driver, a translator, a water technician which makes those every incident every more important. Understanding these patterns is not just a matter of analysis but also morally imperative. This dashboard is a useful resource as a guide to allocate protection, prioritize mental health and aftercare, demand accountability for perpetrators, and challenge the systems that treat local staff as disposable.
+
+As the humanitarian landscape continues to shift and is shaped by politics, climate, and conflict so too must our tools for protecting those who sustain it. The risks are real, the responsibilities are ours, and the time for action is now.
+
+
+
+[^text]: ©Tufte, Edward, *The Visual Display of Quantitative Information*, 2nd ed., 2001, Graphics Press, Cheshire Connecticut, 40. 
+
+[^map]: Charles Joseph Minard, *Tableaux Graphiques et Cartes Figuratives de M. Minard*, 1845-1869, a portfolio of his work held by the Bibliothèque de l’École Nationale des Ponts et Chaussées, Paris, as reproduced in Edward R. Tufte, *The Visual Display of Quantitative Information* (Cheshire, Connecticut © 1983, 2001), p. 176.
