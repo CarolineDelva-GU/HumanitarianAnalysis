@@ -3,6 +3,8 @@ project:
 
 website:
   title: "Humanitarians"
+  repo-url: https://github.com/CarolineDelva-GU/HumanitarianAnalysis.git
+  repo-actions: [edit, issue]
   navbar:
     left:
       - href: index.qmd
@@ -14,6 +16,11 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+
+project:
+  type: website
+  output-dir: docs
+
 
 
 resources:
