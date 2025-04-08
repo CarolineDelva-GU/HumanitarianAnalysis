@@ -659,5 +659,4 @@ Behind every point on this interactive dashboard is a person: a health worker, a
 As the humanitarian landscape continues to shift and is shaped by politics, climate, and conflict so too must our tools for protecting those who sustain it. The risks are real, the responsibilities are ours, and the time for action is now.
 
 
-This dashboard uses the Close Read extension to enable interactive storytelling with scroll-triggered map transitions [@closeread].
-
+This dashboard uses the Close Read extension to enable interactive storytelling with scroll-triggered map transitions [@closeread] and ChatGPT to assist with text editing [@chatgpt-assist].
