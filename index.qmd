@@ -26,6 +26,9 @@ format:
 
 ## Risky Bravery: <br> The Human Cost of Humanitarian Work
 
+![Humanitarians](humanitarians.png){.center width="60%"}
+
+
 The act of giving back to at-risk communities has always been a considerable act of selflessness and recognition. As various countries around the world are often met with troubling disasters, humanitarian workers often rush to the aid to those in need. However, such acts of bravery and volunteerism come with a risk to their personal lives, as thousands of humanitarians can be harmed themselves as hey deliver food, administer vaccines, rebuild communities, and offer hope to ravaged communities. But behind the logistics and headlines lies a harder truth: their work is dangerous, and the risks they face are growing.
 
 As violence against aid workers becomes more common, understanding its pattern can provide insights to those who wish to help others in times of need. By exploring the patterns of targeted attacks, kidnappings, and killings, humanitarian organizations can provide their volunteers with the proper means and information to protect themselves while coming to the aid of those facing difficult situations. Analyzing the pattern of violence against humanitarians is important because when an aid worker is harmed, food does not reach the hungry, medical care is delayed for the wounded, and recovery efforts stall overall.
